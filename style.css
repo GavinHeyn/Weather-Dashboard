@@ -1,0 +1,36 @@
+/* Additional custom styles can go here */
+.weather-icon-lg {
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+}
+
+.card {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-2px);
+}
+
+.forecast-day:hover {
+    border-left-color: #764ba2;
+    transition: border-color 0.3s;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .temperature-display {
+        font-size: 3rem;
+    }
+    
+    .weather-icon-lg {
+        width: 80px;
+        height: 80px;
+    }
+}

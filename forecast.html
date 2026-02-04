@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}7-Day Forecast - {{ forecast.city }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-weather shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    7-Day Forecast for {{ forecast.city }}, {{ forecast.country }}
+                </h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Temperature Chart -->
+    <div class="col-12 mb-4">
+        <div class="card bg-weather shadow">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-thermometer-half me-2"></i>Detailed Forecast Analysis
+                </h5>
+                <div class="chart-container">
+                    {{ temp_chart|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 7-Day Summary Chart -->
+    <div class="col-12 mb-4">
+        <div class="card bg-weather shadow">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-calendar-alt me-2"></i>7-Day Temperature Forecast
+                </h5>
+                <div class="chart-container">
+                    {{ forecast_chart|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Daily Forecast Cards -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-weather shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-day me-2"></i>Daily Forecast Summary
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for day in forecast.daily_summary %}
+                    <div class="col-md-4 col-lg-3 mb-3">
+                        <div class="card h-100 forecast-day">
+                            <div class="card-body text-center">
+                                <h6 class="card-title text-primary">{{ day.day_name }}</h6>
+                                <p class="text-muted small">{{ day.date }}</p>
+                                
+                                <img src="http://openweathermap.org/img/wn/{{ day.icon }}.png" 
+                                     alt="{{ day.main_description }}"
+                                     class="condition-icon mb-2">
+                                
+                                <h5>{{ day.main_description }}</h5>
+                                
+                                <div class="mt-3">
+                                    <p class="mb-1">
+                                        <i class="fas fa-thermometer-three-quarters text-danger me-1"></i>
+                                        <strong>High:</strong> {{ day.max_temp }}°C
+                                    </p>
+                                    <p class="mb-1">
+                                        <i class="fas fa-thermometer-quarter text-primary me-1"></i>
+                                        <strong>Low:</strong> {{ day.min_temp }}°C
+                                    </p>
+                                    <p class="mb-1">
+                                        <i class="fas fa-tint text-info me-1"></i>
+                                        <strong>Humidity:</strong> {{ day.avg_humidity }}%
+                                    </p>
+                                    {% if day.pop > 0 %}
+                                    <p class="mb-0">
+                                        <i class="fas fa-cloud-rain text-primary me-1"></i>
+                                        <strong>Rain:</strong> {{ day.pop }}%
+                                    </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Popular Cities for Forecast -->
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-weather shadow">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-search me-2"></i>View Forecast for Other Cities
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for city in cities|slice(5) %}
+                    <div class="col-6 col-md-4 col-lg-2 mb-2">
+                        <a href="{{ url_for('forecast', city=city) }}" 
+                           class="btn btn-outline-primary w-100 {% if city == current_city %}active{% endif %}">
+                            {{ city }}
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

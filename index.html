@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Current Weather - {{ weather.city }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Current Weather Card -->
+    <div class="col-lg-8 mb-4">
+        <div class="card bg-weather shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-map-marker-alt"></i> 
+                        {{ weather.city }}, {{ weather.country }}
+                    </h3>
+                    <small class="text-light">{{ weather.timestamp }}</small>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center">
+                        <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@4x.png" 
+                             alt="{{ weather.description }}" 
+                             class="weather-icon-lg mb-3">
+                        <h1 class="temperature-display">{{ weather.temperature }}°C</h1>
+                        <h4 class="text-primary">{{ weather.description }}</h4>
+                        <p class="text-muted">Feels like {{ weather.feels_like }}°C</p>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="weather-stat">
+                                    <i class="fas fa-tint fa-2x text-info mb-2"></i>
+                                    <h6 class="mb-1">Humidity</h6>
+                                    <p class="h4 mb-0">{{ weather.humidity }}%</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="weather-stat">
+                                    <i class="fas fa-wind fa-2x text-success mb-2"></i>
+                                    <h6 class="mb-1">Wind Speed</h6>
+                                    <p class="h4 mb-0">{{ weather.wind_speed }} m/s</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="weather-stat">
+                                    <i class="fas fa-tachometer-alt fa-2x text-warning mb-2"></i>
+                                    <h6 class="mb-1">Pressure</h6>
+                                    <p class="h4 mb-0">{{ weather.pressure }} hPa</p>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="weather-stat">
+                                    <i class="fas fa-cloud fa-2x text-secondary mb-2"></i>
+                                    <h6 class="mb-1">Cloudiness</h6>
+                                    <p class="h4 mb-0">{{ weather.clouds }}%</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mt-3">
+                            <div class="col-6">
+                                <div class="sun-time">
+                                    <i class="fas fa-sunrise fa-2x text-warning"></i>
+                                    <div>
+                                        <h6 class="mb-1">Sunrise</h6>
+                                        <p class="h5 mb-0">{{ weather.sunrise }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="sun-time">
+                                    <i class="fas fa-sunset fa-2x text-danger"></i>
+                                    <div>
+                                        <h6 class="mb-1">Sunset</h6>
+                                        <p class="h5 mb-0">{{ weather.sunset }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Popular Cities -->
+        <div class="card bg-weather shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="fas fa-city me-2"></i>Popular Cities</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for city in cities %}
+                    <a href="{{ url_for('index', city=city) }}" 
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {% if city == current_city %}active{% endif %}">
+                        <span>
+                            <i class="fas fa-map-marker-alt me-2"></i>{{ city }}
+                        </span>
+                        {% if city == current_city %}
+                        <i class="fas fa-check"></i>
+                        {% endif %}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card bg-weather shadow-sm mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('forecast', city=current_city) }}" 
+                   class="btn btn-primary w-100 mb-3">
+                    <i class="fas fa-chart-line me-2"></i>View 7-Day Forecast
+                </a>
+                <button class="btn btn-outline-secondary w-100" onclick="refreshWeather()">
+                    <i class="fas fa-sync-alt me-2"></i>Refresh Data
+                </button>
+            </div>
+        </div>
+        
+        <!-- Weather Tips -->
+        <div class="card bg-weather shadow-sm">
+            <div class="card-body">
+                <h6><i class="fas fa-lightbulb text-warning me-2"></i>Weather Tip</h6>
+                <p class="small mb-0">
+                    {% if weather.temperature < 5 %}
+                    ❄️ Very cold! Bundle up with layers, gloves, and a warm hat.
+                    {% elif weather.temperature < 15 %}
+                    🧥 Chilly weather. A light jacket would be perfect.
+                    {% elif weather.temperature < 25 %}
+                    😊 Pleasant weather! Great for outdoor activities.
+                    {% elif weather.temperature < 35 %}
+                    🌞 Warm day. Stay hydrated and wear sunscreen.
+                    {% else %}
+                    🔥 Very hot! Avoid direct sun and drink plenty of water.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function refreshWeather() {
+    window.location.reload();
+}
+
+// Auto-refresh every 10 minutes (600,000 milliseconds)
+setTimeout(() => {
+    if(confirm('Refresh weather data?')) {
+        refreshWeather();
+    }
+}, 600000);
+</script>
+{% endblock %}
